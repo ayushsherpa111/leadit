@@ -20,8 +20,8 @@
 # vendor/
 
 ### Go Patch ###
-/vendor/
-/Godeps/
+vendor
+Godeps
 
 ### react ###
 .DS_*
