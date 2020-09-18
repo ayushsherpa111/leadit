@@ -1,0 +1,131 @@
+.bod {
+  display: flex;
+  flex-direction: row;
+}
+
+.banner {
+  width: 20%;
+  height: calc(100vh - 48px);
+  background-position: center;
+  background-size: cover;
+}
+
+.registerForm {
+  margin: 9% auto;
+  width: 32%;
+  padding: 30px 15px;
+}
+
+.subtitle {
+  margin-bottom: 6px;
+  font-size: 20px;
+}
+
+.registerForm .title {
+  margin-bottom: 10px;
+}
+
+.registerForm .title h1 {
+  font-size: 35px;
+  margin-bottom: 20px;
+}
+
+.forms {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.formGrp {
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+}
+
+.formGrp label {
+  margin-bottom: 5px;
+  text-transform: capitalize;
+  letter-spacing: 1.5px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.formGrp input[type="text"],
+input[type="password"] {
+  color: #061d56;
+  font-weight: 600;
+  font-size: 16px;
+  border-radius: 6px;
+  padding: 9px 8px;
+  background: #f4f4f4;
+}
+
+.formGrp input::placeholder {
+  font-weight: 100;
+  font-size: 15px;
+}
+
+.error {
+  color: #ff5200;
+  font-size: 16px;
+  margin-top: 12px;
+  /* opacity: 0; */
+  /* transform: translateY(-20px); */
+  animation: fade 200ms ease-in forwards;
+}
+
+.registerBtn.frm {
+  padding: 11px 0;
+  font-size: 15px;
+  margin-left: auto;
+  width: 22%;
+  font-weight: 300;
+}
+
+@media screen and (max-width: 1400px) {
+  .banner {
+    height: calc(100vh - 43px);
+  }
+
+  .registerForm .title h1 {
+    font-size: 20px;
+  }
+
+  .registerForm .title .subtitle {
+    font-size: 15px;
+  }
+
+  .registerForm {
+    margin: 0% auto;
+    width: 43%;
+  }
+
+  .formGrp label {
+    font-size: 12px;
+  }
+
+  .error {
+    font-size: 14px;
+  }
+
+  .formGrp input::placeholder {
+    font-size: 14px;
+  }
+
+  .formGrp input[type="text"],
+  input[type="password"] {
+    font-size: 14px;
+    padding: 9px 8px;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

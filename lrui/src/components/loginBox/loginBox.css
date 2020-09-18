@@ -1,0 +1,23 @@
+.loginOpts {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+.loginBtn {
+  background-color: #ff4500;
+  border: none;
+}
+
+.registerBtn {
+  background-color: transparent;
+  border: 1px solid whitesmoke;
+}
+
+@media screen and (max-width: 1400px) {
+  .loginOpts button {
+    padding: 7px 12px;
+    font-size: 11px;
+    width: 35%;
+  }
+}
