@@ -15,6 +15,7 @@ func handleRoute() {
 		port = ":5000"
 	}
 	router := mux.NewRouter().StrictSlash(true)
+	router.HandleFunc("/secret", handler.AuthHandler(handler.SecretRoute)).Methods("GET")
 	router.HandleFunc("/register", handler.RegisterHandler).Methods("POST")
 	if err := http.ListenAndServe(port, router); err != nil {
 		log.Fatalln(err)

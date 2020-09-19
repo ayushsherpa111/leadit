@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/ayushsherpa111/loginService/utils"
+	"github.com/gorilla/sessions"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -27,6 +28,7 @@ const (
 var (
 	MyCon *gorm.DB
 	dberr error
+	store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
 )
 
 type User struct {
@@ -58,8 +60,28 @@ func Connection() {
 	MyCon.AutoMigrate(&User{})
 }
 
+func AuthHandler(hndlr http.HandlerFunc) http.HandlerFunc {
+	// assume that the user is already logged in
+	return func(writer http.ResponseWriter, req *http.Request) {
+		session, err := store.Get(req, "_sess_id")
+		log.Println("[/secret] - session", session)
+		if err != nil || session.IsNew {
+			UnAuthHandler(writer, req)
+		} else {
+			hndlr(writer, req)
+		}
+	}
+}
+
+func UnAuthHandler(writer http.ResponseWriter, req *http.Request) {
+	// an un authenticated user is tryign to access a route that requires a valid session
+	writer.WriteHeader(http.StatusUnauthorized)
+	writer.Write([]byte(fmt.Sprintf(`{"err":%s}`, req.Header.Get("error"))))
+}
+
 func RegisterHandler(writer http.ResponseWriter, r *http.Request) {
 	//  Let the reciever know the that the data being sent is a JSON
+	session, _ := store.Get(r, "_sess_id")
 	writer.Header().Set("Content-Type", "application/json; charset=utf-8")
 	// Get the body length so we can read the number of "bytes" being sent
 	length, _ := strconv.ParseInt(r.Header.Get("Content-length"), 10, 32)
@@ -78,18 +100,25 @@ func RegisterHandler(writer http.ResponseWriter, r *http.Request) {
 	(&newUser).Hash()
 	log.Printf("[/register] - New User Ready %v", newUser)
 	MyCon.Model(&newUser).Create(&newUser)
-	cookie := &http.Cookie{
-		Name:     "_sess_id",
-		Value:    "AWNDOAKWNDOonawodin",
-		Domain:   "localhost",
+	session.Values["authenticated"] = true
+	session.Values["userid"] = newUser.UID
+	session.Options = &sessions.Options{
 		Path:     "/",
-		HttpOnly: true,
+		Domain:   "localhost",
 		MaxAge:   60 * 60 * 24 * 2,
+		HttpOnly: true,
 		Secure:   false,
 	}
-	http.SetCookie(writer, cookie)
+	session.Save(r, writer)
 	usrStr, _ := json.Marshal(newUser)
 	fmt.Fprintf(writer, `{"msg": %s}`, string(usrStr))
+}
+
+func SecretRoute(writer http.ResponseWriter, req *http.Request) {
+	currSesson, _ := store.Get(req, "_sess_id")
+	log.Printf("[/secret] - SESSION : %v", currSesson.Values)
+	strSess, _ := json.Marshal(currSesson.Values)
+	writer.Write([]byte(fmt.Sprintf(`{"data":%s}`, strSess)))
 }
 
 func LoginHandler(writer http.ResponseWriter, r *http.Request) {

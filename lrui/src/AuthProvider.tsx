@@ -1,24 +1,32 @@
 import React from "react";
-import AuthContext, { useAuthState } from "./hooks/useAuth";
+import AuthContext, { defaultLoginState } from "./hooks/useAuth";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import NavBarComponent from "./components/navBar/navBarComponent";
 import { RegisterComponent } from "./components/register/registerComponent";
 import { AccountSettingComp } from "./components/accountSettings/accountSettingComp";
+import HomeComponent from "./components/Home/HomeComponent";
+import ProtectedRoute from "./ProtectedRoute";
+import LoginComponent from "./components/loginPage/loginComponent";
 
 interface Props {
   children?: JSX.Element[];
 }
 
 const AuthProvider: React.FC<Props> = () => {
-  const state = useAuthState();
+  const [user, setUser] = React.useState(defaultLoginState);
   return (
-    <AuthContext.Provider value={state}>
+    <AuthContext.Provider value={{ user, setUser }}>
       <Router>
         <NavBarComponent />
         <Switch>
-          <Route path="/" exact render={() => <h1>Hllo</h1>} />
+          <Route path="/" exact component={HomeComponent} />
+          <ProtectedRoute
+            path="/account"
+            Component={AccountSettingComp}
+            auth={user.isLoggedIn}
+          />
           <Route path="/register" component={RegisterComponent} />
-          <Route path="/account" component={AccountSettingComp} />
+          <Route path="/login" component={LoginComponent} />
           <Route path="/" render={() => <h1>404 not found</h1>} />
         </Switch>
       </Router>

@@ -1,11 +1,11 @@
 import * as React from "react";
 import "./navBar.css";
 import LoginBoxComponent from "../loginBox/loginBoxComponent";
-import { useAuthState } from "src/hooks/useAuth";
+import AuthContext from "src/hooks/useAuth";
 
 const NavBarComponent: React.FC = () => {
-  const usr = useAuthState();
-  console.log(usr);
+  const { user } = React.useContext(AuthContext);
+  console.log(user);
   return (
     <div className="topNav">
       <div className="intro">

@@ -9,6 +9,7 @@ services:
     volumes:
       - ./loginservice:/usr/share/app
     environment:
+      SESSION_KEY: "AWODNOIndawldwad^*&(*)JIJ9021u31923u09wjdinwad"
       ENV: "development"
       PORT: ":5000"
       DB_URI: "postgres://root:root@dblogin:5432/loginS"
