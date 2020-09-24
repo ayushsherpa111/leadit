@@ -7,6 +7,5 @@ export default interface User {
 
 export interface AuthStat {
   isLoggedIn: boolean;
-  userID: string;
   pending: boolean;
 }

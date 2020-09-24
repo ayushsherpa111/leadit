@@ -1,22 +1,29 @@
 import * as React from "react";
 import "./register.css";
 import { Formik, Form, ErrorMessage, Field } from "formik";
-import User from "src/interfaces/user";
+import User, { AuthStat } from "src/interfaces/user";
 import * as Yup from "yup";
-import { RouteComponentProps } from "react-router-dom";
-interface Props extends RouteComponentProps {}
+import { RouteComponentProps, Redirect } from "react-router-dom";
+import AuthContext from "src/hooks/useAuth";
+interface Props extends RouteComponentProps {
+  isLoggedIn: (user: AuthStat) => boolean;
+}
 
 interface Register extends User {
   confirm: string;
 }
 
-export const RegisterComponent: React.FC<Props> = ({ history }) => {
+export const RegisterComponent: React.FC<Props> = ({ isLoggedIn, history }) => {
+  const { user, setUser } = React.useContext(AuthContext)!;
   const initalValues: Register = {
     username: "",
     password: "",
     email: "",
     confirm: "",
   };
+  if (isLoggedIn(user)) {
+    return <Redirect to="/" />;
+  }
   return (
     <div className="bod">
       <div
@@ -48,19 +55,22 @@ export const RegisterComponent: React.FC<Props> = ({ history }) => {
             email: Yup.string()
               .required("Gonna need an Email buddy")
               .email("Deadass this isnt even an email"),
-            confirm: Yup.string().equals(
-              [Yup.ref("password")],
-              "Passwords dont match"
-            ),
+            confirm: Yup.string()
+              .required("Field Missing")
+              .equals([Yup.ref("password")], "Passwords dont match"),
           })}
           onSubmit={async (values: Register, action) => {
             try {
+              setUser(() => ({
+                isLoggedIn: false,
+                pending: true,
+              }));
               action.setSubmitting(true);
               delete values.confirm;
               const resp = await fetch("/api/v1/login/register", {
                 method: "POST",
                 headers: {
-                  "Content-length": "" + JSON.stringify(values).length,
+                  "Content-Type": "application/json; charset=utf-8",
                 },
                 body: JSON.stringify(values),
               });
@@ -68,12 +78,28 @@ export const RegisterComponent: React.FC<Props> = ({ history }) => {
               console.log(data);
               if (resp.status === 200) {
                 console.log("Registered");
+                history.push("/");
+                setUser(() => ({
+                  isLoggedIn: true,
+                  pending: false,
+                }));
+                action.resetForm();
+              } else {
+                setUser(() => ({
+                  isLoggedIn: false,
+                  pending: false,
+                }));
+                console.log(resp);
+                action.setFieldError("email", "Email Is Taken");
+                action.setFieldError("username", "Username is also taken");
+                action.setFieldValue("password", "");
+                action.setFieldValue("confirm", "");
               }
-              action.setSubmitting(false);
-              action.resetForm();
-              history.push("/");
             } catch (err) {
               console.log(err);
+              action.resetForm();
+            } finally {
+              action.setSubmitting(false);
             }
           }}
         >

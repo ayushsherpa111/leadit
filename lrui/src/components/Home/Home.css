@@ -1,0 +1,13 @@
+.mainContent {
+  display: flex;
+  flex-direction: row;
+  padding: 7px 10px;
+}
+
+.topPosts {
+  width: 90%;
+}
+
+.options {
+  padding: 10px 10px 10px 0;
+}

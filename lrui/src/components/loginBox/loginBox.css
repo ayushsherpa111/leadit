@@ -5,8 +5,13 @@
 }
 
 .loginBtn {
-  background-color: #ff4500;
+  background-color: var(--orange);
   border: none;
+}
+
+.loginBtn:hover {
+  color: var(--orange);
+  background-color: white;
 }
 
 .registerBtn {

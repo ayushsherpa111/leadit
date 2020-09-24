@@ -1,7 +1,12 @@
+:root {
+  --orange: #ff4500;
+}
+
 * {
   margin: 0;
   padding: 0;
 }
+
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -26,12 +31,24 @@ button {
   color: white;
   padding: 10px 0;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 5px;
   font-weight: 600;
   width: 39%;
   text-transform: uppercase;
   font-size: 13px;
   letter-spacing: 1px;
+  background: none;
+  border: 1px solid;
+  transition: all ease 250ms;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+button:hover {
+  background-color: white;
+  color: black;
 }
 
 p,

@@ -1,0 +1,11 @@
+{
+  "type": "postgres",
+  "host": "dblogin",
+  "port": 5432,
+  "username": "root",
+  "password": "root",
+  "database": "loginS",
+  "synchronize": false,
+  "entities": ["src/entity/**/*.ts"],
+  "migrations": ["src/migrations/**/*.ts"]
+}

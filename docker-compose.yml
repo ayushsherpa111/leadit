@@ -1,6 +1,15 @@
 version: "3.7"
 services:
 
+  redistore:
+    container_name: redis_store
+    image: redis:6.0.8
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./docker/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+
   loginservice:
     container_name: login_server
     build: ./loginservice
@@ -9,14 +18,44 @@ services:
     volumes:
       - ./loginservice:/usr/share/app
     environment:
+      REDIS_PORT: "6379"
+      REDIS_HOST: "redis_store"
       SESSION_KEY: "AWODNOIndawldwad^*&(*)JIJ9021u31923u09wjdinwad"
+      SESS_NAME: "_sess_id"
       ENV: "development"
       PORT: ":5000"
+      AUTH_KEY: "170c93cb7e0779dea6823381fc07e8620a6065b58c6b5cb0528870795390f8d8e22048cddb0f315b4d384f8dea12384b53eaa1b4eed64a7e2171ae0bea674011"
+      ENC_KEY: "a7e25420cdd915238adbd757c8fa0f581250555353b0c3c7cbb16adb9056d324"
       DB_URI: "postgres://root:root@dblogin:5432/loginS"
         # db_name://<username>:<password>:<service_name>:<port>/<db>
     depends_on:
       - dblogin
+      - redistore
     restart: always
+
+  postservice:
+    container_name: post_server
+    build: ./postservice
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./postservice/node_modules:/usr/share/app/node_modules
+      - ./postservice/src:/usr/share/app/src
+      - ./postservice/package.json:/usr/share/app/package.json
+      - ./postservice/package-lock.json:/usr/share/app/package-lock.json
+      - ./postservice/ormconfig.json:/usr/share/app/ormconfig.json
+    environment:
+      REDIS_PORT: "6379"
+      REDIS_HOST: "redis_store"
+      DB_URI: "postgres://root:root@dblogin:5432/loginS"
+      PORT: "5000"
+      SESS_NAME: "_sess_id"
+      AUTH_KEY: "170c93cb7e0779dea6823381fc07e8620a6065b58c6b5cb0528870795390f8d8e22048cddb0f315b4d384f8dea12384b53eaa1b4eed64a7e2171ae0bea674011"
+      ENC_KEY: "a7e25420cdd915238adbd757c8fa0f581250555353b0c3c7cbb16adb9056d324"
+    depends_on:
+      - dblogin
+      - redistore
+    command: npm run start2
 
   dblogin:
     container_name: login_db

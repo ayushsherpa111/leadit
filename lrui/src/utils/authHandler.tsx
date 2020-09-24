@@ -1,26 +1,61 @@
-import User from "src/interfaces/user";
+import { sign, verify } from "jsonwebtoken";
+import { AuthStat } from "src/interfaces/user";
 
-export class Redditer implements User {
-    username: string;
-    password: string;
-    email: string;
-    constructor(_uname: string, _pwd: string, _email: string) {
-        this.username = _uname;
-        this.password = _pwd;
-        this.email = _email;
-    }
+type user = {
+  email: string;
+  password: string;
+};
 
-    public static isLoggedIn(): boolean {
-        return false;
-    }
+function authService() {
+  const login: (user: user) => Promise<Response> = (user: user) => {
+    return fetch("/api/v1/login/signin", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      body: JSON.stringify(user),
+    });
+  };
 
-    register() {
-        // register user
-    }
+  const setStorage: (key: string, value: string) => void = (key, value) => {
+    localStorage.setItem(key, value);
+  };
 
-    async login(): Promise<Redditer> {
-        // login user
-        let user = new Redditer("Ayush", "SomePass", "ayush20100@hotmail.com");
-        return user;
+  const getStorage: (key: string) => string | null = (key: string) =>
+    localStorage.getItem(key);
+  const setToken = (id: string) => {
+    sign(
+      { currentUser: id },
+      "secret",
+      {
+        expiresIn: "1d",
+      },
+      (err, encoded) => {
+        if (err == null) {
+          console.log(encoded);
+          setStorage("currentUser", encoded!);
+        }
+      }
+    );
+  };
+
+  const isLoggedIn: (user: AuthStat) => boolean = (user) => {
+    const data: string | null = getStorage("currentUser");
+    if (data === null) {
+      return false;
     }
+    if (user.isLoggedIn) {
+      return true;
+    }
+    console.log(verify(data, "secret"));
+    return !!verify(data, "secret");
+  };
+
+  return {
+    login,
+    isLoggedIn,
+    setToken,
+  };
 }
+
+export default authService;

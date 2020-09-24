@@ -7,6 +7,8 @@ import { AccountSettingComp } from "./components/accountSettings/accountSettingC
 import HomeComponent from "./components/Home/HomeComponent";
 import ProtectedRoute from "./ProtectedRoute";
 import LoginComponent from "./components/loginPage/loginComponent";
+import authService from "./utils/authHandler";
+import SubFormComponent from "./components/SubForm/SubFormComponent";
 
 interface Props {
   children?: JSX.Element[];
@@ -14,6 +16,7 @@ interface Props {
 
 const AuthProvider: React.FC<Props> = () => {
   const [user, setUser] = React.useState(defaultLoginState);
+  const { login, setToken, isLoggedIn } = authService();
   return (
     <AuthContext.Provider value={{ user, setUser }}>
       <Router>
@@ -23,10 +26,30 @@ const AuthProvider: React.FC<Props> = () => {
           <ProtectedRoute
             path="/account"
             Component={AccountSettingComp}
-            auth={user.isLoggedIn}
+            auth={user}
           />
-          <Route path="/register" component={RegisterComponent} />
-          <Route path="/login" component={LoginComponent} />
+          <Route
+            path="/register"
+            render={(props) => (
+              <RegisterComponent isLoggedIn={isLoggedIn} {...props} />
+            )}
+          />
+          <Route
+            path="/login"
+            render={(props) => (
+              <LoginComponent
+                login={login}
+                isLoggedIn={isLoggedIn}
+                setToken={setToken}
+                {...props}
+              />
+            )}
+          />
+          <ProtectedRoute
+            path="/sub/create"
+            auth={user}
+            Component={SubFormComponent}
+          />
           <Route path="/" render={() => <h1>404 not found</h1>} />
         </Switch>
       </Router>
