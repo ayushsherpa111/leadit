@@ -3,18 +3,23 @@ import { Redirect, Route } from "react-router-dom";
 import { AuthStat } from "./interfaces/user";
 
 interface Iprops {
-  Component: React.FC;
   auth: AuthStat;
   path: string;
 }
 
-const ProtectedRoute: React.FC<Iprops> = ({ Component, auth, path }) => {
+const ProtectedRoute: React.FC<Iprops> = ({
+  children,
+  auth,
+  path,
+  ...rest
+}) => {
   return (
     <Route
       path={path}
+      {...rest}
       render={() =>
         !auth.pending && auth.isLoggedIn ? (
-          <Component />
+          <>{children}</>
         ) : auth.pending ? (
           <h1 style={{ color: "white", fontSize: "150px" }}>Loading....</h1>
         ) : (

@@ -37,23 +37,29 @@ var (
 	redisPORT  = os.Getenv("REDIS_PORT")
 	redisHOST  = os.Getenv("REDIS_HOST")
 	// encKey, _  = hex.DecodeString(os.Getenv("ENC_KEY"))
-	store, _ = redistore.NewRediStore(10, "tcp", fmt.Sprintf("%s:%s", redisHOST, redisPORT), "", authKey)
-	sessName = os.Getenv("SESS_NAME")
-	cookie   = securecookie.SecureCookie{}
+	store, _   = redistore.NewRediStore(10, "tcp", fmt.Sprintf("%s:%s", redisHOST, redisPORT), "", authKey)
+	sessName   = os.Getenv("SESS_NAME")
+	cookieOpts = &sessions.Options{
+		Path:     "/",
+		MaxAge:   60 * 60 * 24 * 2,
+		HttpOnly: true,
+		Secure:   false,
+	}
 )
 
 func init() {
 	store.SetSerializer(redistore.JSONSerializer{})
+	store.SetKeyPrefix("session_")
 }
 
 type User struct {
 	UID       string    `gorm:"primaryKey;default:uuid_generate_v4()"`
 	Email     string    `json:"email"`
+	Avatar    string    `gorm:"default:default.png"`
 	Username  string    `json:"username"`
 	Password  string    `json:"password"`
 	CreatedAt time.Time `gorm:"default:now()"`
 	UpdatedAt time.Time `gorm:"default:now()"`
-	DeletedAt time.Time
 }
 
 type UserInteraction interface {
@@ -109,7 +115,6 @@ func AuthHandler(hndlr http.HandlerFunc) http.HandlerFunc {
 			session.Values["authenticated"] = false
 			session.Options.MaxAge = -1
 			session.Save(req, writer)
-			// store.Save(req, writer, session)
 			if err = session.Save(req, writer); err != nil {
 				http.Error(writer, err.Error(), http.StatusInternalServerError)
 			}
@@ -117,17 +122,17 @@ func AuthHandler(hndlr http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 		req = req.WithContext(context.WithValue(req.Context(), "session", session))
-		req = req.WithContext(context.WithValue(req.Context(), "test", "bruh"))
 		hndlr(writer, req)
 	}
 }
 
 func SecretRoute(writer http.ResponseWriter, req *http.Request) {
 	currSesson := req.Context().Value("session").(*sessions.Session)
-	test := req.Context().Value("test").(string)
-	writer.Header().Set("access-control-allow-origin", "*")
-	log.Printf("[/secret] - SESSION : %v", currSesson.Values)
-	writer.Write([]byte(fmt.Sprintf(`{"data":%s%s}`, currSesson.Values["userid"], test)))
+	log.Printf("[ENCODE-MULTI] %v - %v - %v", currSesson.Name(), currSesson.ID, store.Codecs)
+	enc, _ := securecookie.EncodeMulti(currSesson.Name(), currSesson.ID, store.Codecs...)
+	var target interface{}
+	writer.Header().Set("Content-Type", "application/json")
+	writer.Write([]byte(fmt.Sprintf(`{"encoded": "%v", "decoded":"%v"}`, enc, target)))
 }
 
 func IsAllowed(user *User) (bool, error) {
@@ -189,18 +194,22 @@ func RegisterHandler(writer http.ResponseWriter, r *http.Request) {
 	(&newUser).Hash()
 	log.Printf("[/register] - New User Ready %v", newUser)
 	MyCon.Model(&newUser).Create(&newUser)
-	session.Values["authenticated"] = true
-	session.Values["userid"] = newUser.UID
-	session.Options = &sessions.Options{
-		Path:     "/",
-		MaxAge:   60 * 60 * 24 * 2,
-		HttpOnly: true,
-		Secure:   false,
+	setCookie(session, map[interface{}]interface{}{"authenticated": true, "userid": newUser.UID}, cookieOpts)
+	if err := session.Save(r, writer); err != nil {
+		r = r.WithContext(context.WithValue(r.Context(), "error", err.Error()))
+		SendError(writer, r)
+		return
 	}
-	session.Save(r, writer)
-	// store.Save(r, writer, session)
-	usrStr, _ := json.Marshal(newUser)
-	fmt.Fprintf(writer, `{"msg": %s}`, string(usrStr))
+	fmt.Fprintf(writer, `{"id": "%s","username": "%s", "avatar":"%s"}`, newUser.UID, newUser.Username, newUser.Avatar)
+}
+
+func setCookie(
+	ses *sessions.Session,
+	values map[interface{}]interface{},
+	opts *sessions.Options) {
+	log.Print("[SET-COOKIE]")
+	ses.Values = values
+	ses.Options = opts
 }
 
 func LoginHandler(writer http.ResponseWriter, r *http.Request) {
@@ -228,21 +237,15 @@ func LoginHandler(writer http.ResponseWriter, r *http.Request) {
 	if isAllowed, authUser := CheckLogin(&loginUser); isAllowed {
 		log.Println("[/user] - ", authUser)
 
-		session.Values = map[interface{}]interface{}{"authenticated": true, "userid": authUser.UID}
-		session.Options = &sessions.Options{
-			Path:     "/",
-			MaxAge:   60 * 60 * 24 * 2,
-			HttpOnly: true,
-			Secure:   false,
-		}
+		setCookie(session, map[interface{}]interface{}{"authenticated": true, "userid": authUser.UID}, cookieOpts)
+		// session.ID = authUser.UID
 		if err = session.Save(r, writer); err != nil {
 			r = r.WithContext(context.WithValue(r.Context(), "error", err.Error()))
 			SendError(writer, r)
 			return
 		}
 		log.Printf("[/signup] - USER FOUND %v", authUser)
-		reply := fmt.Sprintf(`{"msg": "Login Successfull", "id":"%s"}`, authUser.UID)
-		writer.Write([]byte(reply))
+		fmt.Fprintf(writer, `{"id": "%s","username": "%s", "avatar": "%s"}`, authUser.UID, authUser.Username, authUser.Avatar)
 	} else {
 		// wrong passwrod or somet hsit
 		r = r.WithContext(context.WithValue(r.Context(), "error", "Invalid Password / Email"))

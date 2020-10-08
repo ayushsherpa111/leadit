@@ -1,0 +1,73 @@
+.uploadForm {
+  padding: 0 15px 15px 15px;
+}
+
+.formGroup {
+  position: relative;
+  margin-bottom: 10px;
+  display: flex;
+}
+
+.counterForm {
+  width: 100%;
+  display: flex;
+}
+
+.bodyText::-webkit-scrollbar-track {
+  background-color: var(--background);
+}
+
+.bodyText::-webkit-scrollbar {
+  width: 5px;
+  background-color: #f5f5f5;
+}
+
+.bodyText::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: gray;
+}
+
+.formGroup button {
+  width: 20%;
+}
+
+.formGroup button:not(:last-child) {
+  margin-left: auto;
+  margin-right: 10px;
+  background-color: var(--orange);
+  color: white;
+  border: none;
+}
+
+.error {
+  font-size: 14px;
+  padding-left: 18px;
+  margin: 10px 0;
+}
+
+.error p {
+  color: var(--error);
+}
+
+.counterForm textarea {
+  padding: 8px 68px 8px 16px;
+  background-color: transparent;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  width: 100%;
+  overflow-wrap: break-word;
+  overflow-x: hidden;
+  /* height: 30px; */
+  resize: none;
+  color: white;
+  font-size: 15px;
+}
+
+.counterForm .counter {
+  position: absolute;
+  font-size: 12px;
+  color: #4c4c50;
+  right: 12px;
+  bottom: 9px;
+}

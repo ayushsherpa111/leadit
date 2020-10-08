@@ -3,14 +3,13 @@ import { RouteComponentProps, Redirect } from "react-router-dom";
 import AuthContext from "src/hooks/useAuth";
 import * as Yup from "yup";
 import "./login.css";
+import "../register/register.css";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { AuthStat } from "src/interfaces/user";
+import { AuthStat, AuthProp } from "src/interfaces/user";
 import { useQuery } from "../../hooks/useAuth";
 
-interface Props extends RouteComponentProps {
+interface Props extends RouteComponentProps, AuthProp {
   login: (u: { email: string; password: string }) => Promise<Response>;
-  setToken: (id: string) => void;
-  isLoggedIn: (user: AuthStat) => boolean;
 }
 
 const LoginComponent: React.FC<Props> = ({
@@ -34,7 +33,7 @@ const LoginComponent: React.FC<Props> = ({
     <div className="bod">
       <div
         className="banner"
-        style={{ backgroundImage: "url('images/bkg.jpg')" }}
+        style={{ backgroundImage: "url('/images/bkg.jpg')" }}
       ></div>
       <div className="registerForm lgn">
         <div className="title">
@@ -59,14 +58,20 @@ const LoginComponent: React.FC<Props> = ({
             setUser({ ...user, pending: true });
             try {
               const resp = await login(values);
-              const data: { msg: string; id: string } = await resp.json();
+              const data: {
+                id: string;
+                username: string;
+                avatar: string;
+              } = await resp.json();
               console.log(data);
               if (resp.status === 200) {
-                setToken(data.id);
-                setUser(() => ({
+                const newSession: AuthStat = {
                   isLoggedIn: true,
                   pending: false,
-                }));
+                  ...data,
+                };
+                setToken(newSession);
+                setUser(() => newSession);
                 const nextRoute = query.get("next") ?? "";
                 history.push("/" + nextRoute);
               }
@@ -114,7 +119,6 @@ const LoginComponent: React.FC<Props> = ({
             </Form>
           )}
         </Formik>
-        <p>{JSON.stringify(user)}</p>
       </div>
     </div>
   );

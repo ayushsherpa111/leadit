@@ -66,7 +66,7 @@ input[type="password"] {
 }
 
 .error {
-  color: #ff5200;
+  color: var(--error);
   font-size: 16px;
   margin-top: 12px;
   /* opacity: 0; */

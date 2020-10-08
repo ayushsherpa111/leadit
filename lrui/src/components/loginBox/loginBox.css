@@ -4,6 +4,10 @@
   width: 100%;
 }
 
+.loginOpts button {
+  width: 39%;
+}
+
 .loginBtn {
   background-color: var(--orange);
   border: none;

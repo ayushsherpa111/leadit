@@ -8,12 +8,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
-const SharedProp_1 = require("./SharedProp");
-const Sub_1 = require("./Sub");
+const SharedProp_1 = require("../SharedProp");
 let User = class User extends SharedProp_1.SharedProp {
 };
 __decorate([
-    typeorm_1.OneToMany(() => Sub_1.Sub, (sub) => sub.creator),
     typeorm_1.PrimaryGeneratedColumn("uuid")
 ], User.prototype, "uid", void 0);
 __decorate([

@@ -1,48 +1,45 @@
 .topNav {
-    padding: 2px 6px;
-    background-color: #1a1a1b;
-    display: flex;
+  padding: 3px 6px;
+  background-color: #1a1a1b;
+  display: flex;
 }
 
 .intro {
-    display: flex;
-    align-items: center;
-    /* background-color: #36393f; */
-    padding: 1px 10px;
-    border-radius: 15px;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  /* background-color: #36393f; */
+  padding: 1px 10px;
+  border-radius: 15px;
+  cursor: pointer;
 }
 
 .title h1 {
-    font-weight: 400;
-    font-size: 25px;
+  font-weight: 400;
+  font-size: 25px;
 }
 
 .topNav .logo img {
-    width: 38px;
-    margin-right: 5px;
+  width: 38px;
+  margin-right: 5px;
 }
 
 .stat {
-    margin-left: auto;
-    align-self: center;
-    width: 15%;
+  margin-left: auto;
+  align-self: center;
+  width: 15%;
 }
 
 @media screen and (max-width: 1400px) {
-    .topNav {
-        padding: 1px 3px;
-    }
-    .topNav .logo img {
-        width: 35px;
-    }
-    .title {
-        font-size: 20px;
-    }
-    .title h1 {
-        font-size: 20px;
-    }
-    .stat {
-        width: 19%;
-    }
+  .topNav .logo img {
+    width: 35px;
+  }
+  .title {
+    font-size: 20px;
+  }
+  .title h1 {
+    font-size: 20px;
+  }
+  .stat {
+    width: 18%;
+  }
 }

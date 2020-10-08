@@ -1,9 +1,4 @@
-import {
-  Entity,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-} from "typeorm";
+import { Entity, CreateDateColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export abstract class SharedProp {
@@ -12,7 +7,4 @@ export abstract class SharedProp {
 
   @UpdateDateColumn()
   updated_at!: Date;
-
-  @DeleteDateColumn()
-  deleted_at!: Date;
 }

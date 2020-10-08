@@ -1,5 +1,5 @@
 import { sign, verify } from "jsonwebtoken";
-import { AuthStat } from "src/interfaces/user";
+import { AuthStat } from "src/interfaces";
 
 type user = {
   email: string;
@@ -7,7 +7,7 @@ type user = {
 };
 
 function authService() {
-  const login: (user: user) => Promise<Response> = (user: user) => {
+  const login: (user: user) => Promise<Response> = (user) => {
     return fetch("/api/v1/login/signin", {
       method: "POST",
       headers: {
@@ -21,14 +21,14 @@ function authService() {
     localStorage.setItem(key, value);
   };
 
-  const getStorage: (key: string) => string | null = (key: string) =>
+  const getStorage: (key: string) => string | null = (key) =>
     localStorage.getItem(key);
-  const setToken = (id: string) => {
+  const setToken = (data: AuthStat) => {
     sign(
-      { currentUser: id },
+      data,
       "secret",
       {
-        expiresIn: "1d",
+        expiresIn: "2d",
       },
       (err, encoded) => {
         if (err == null) {
@@ -39,22 +39,34 @@ function authService() {
     );
   };
 
-  const isLoggedIn: (user: AuthStat) => boolean = (user) => {
-    const data: string | null = getStorage("currentUser");
-    if (data === null) {
-      return false;
+  const clearStorage: (key: string) => void = (key) => {
+    localStorage.removeItem(key);
+  };
+
+  const getLoginStatus: () => AuthStat | null = () => {
+    const storedData = getStorage("currentUser");
+    console.log(storedData);
+    try {
+      return verify(storedData ?? "", "secret") as AuthStat;
+    } catch {
+      return null;
     }
+  };
+
+  const isLoggedIn: (user: AuthStat) => boolean = (user) => {
+    // upon refreshing the user object will be undefined
     if (user.isLoggedIn) {
       return true;
     }
-    console.log(verify(data, "secret"));
-    return !!verify(data, "secret");
+    clearStorage("currentUser");
+    return false;
   };
 
   return {
     login,
     isLoggedIn,
     setToken,
+    getLoginStatus,
   };
 }
 

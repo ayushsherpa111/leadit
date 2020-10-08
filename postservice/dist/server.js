@@ -12,32 +12,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
 const typeorm_1 = require("typeorm");
-const cors_1 = __importDefault(require("cors"));
-const posts_1 = __importDefault(require("./routes/posts"));
-const consts_1 = require("./consts");
-const morgan_1 = __importDefault(require("morgan"));
-const cookie_session_1 = __importDefault(require("cookie-session"));
+const ioredis_1 = __importDefault(require("ioredis"));
+const app_1 = __importDefault(require("./app"));
+const config_1 = require("./config");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log(process.env.DB_URI);
-        const app = express_1.default();
-        const connection = yield typeorm_1.createConnection();
-        console.log(connection.name);
-        app.set("trust proxy", true);
-        app.use(cors_1.default());
-        app.use(morgan_1.default(":method :url :status :res[content-length] - :response-time ms"));
-        app.use(cookie_session_1.default({
-            name: consts_1.SESS_NAME,
-            keys: [consts_1.AUTH_KEY, consts_1.ENC_KEY],
-            maxAge: 60 * 60 * 24 * 2,
-            path: "/",
-            httpOnly: true,
-        }));
-        app.use("/post", posts_1.default);
-        app.listen(consts_1.PORT, () => {
-            console.log(`Listening on ${consts_1.PORT}`);
+        const connection = yield typeorm_1.createConnection(config_1.DB_OPTION);
+        console.log(connection.isConnected);
+        const redisClient = new ioredis_1.default(config_1.REDIS_SETTING);
+        const app = app_1.default(redisClient);
+        app.listen(config_1.PORT, () => {
+            console.log(`Listening on ${config_1.PORT}`);
         });
     }
     catch (e) {

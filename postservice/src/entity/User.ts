@@ -1,10 +1,9 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { SharedProp } from "../SharedProp";
-import { Sub } from "./Sub";
+import { Post } from "./Post";
 
 @Entity({ name: "users" })
 export class User extends SharedProp {
-  @OneToMany(() => Sub, (sub: Sub) => sub.creator)
   @PrimaryGeneratedColumn("uuid")
   uid!: string;
 
@@ -16,4 +15,7 @@ export class User extends SharedProp {
 
   @Column({ type: "varchar", length: 64 })
   password!: string;
+
+  @OneToMany(() => Post, (post: Post) => post.creator)
+  posts!: Post[];
 }

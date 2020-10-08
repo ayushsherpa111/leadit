@@ -1,24 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const Sub_1 = require("src/entities/Sub");
-const typeorm_1 = require("typeorm");
+const middleware_1 = require("../middleware");
 const router = express_1.Router();
-const connection = typeorm_1.getConnection();
-router.get("/", (req, res) => {
-    console.log(req.session);
-    console.log(req.cookies);
-    connection
-        .getRepository(Sub_1.Sub)
-        .find({ select: ["sub", "creator"] })
-        .then((value) => {
-        res.json({
-            value,
-        });
+router.get("/", middleware_1.auth, (req, res) => {
+    var _a;
+    console.log(req.user);
+    (_a = req.user) === null || _a === void 0 ? void 0 : _a.session().then((data) => {
+        res.json(JSON.parse(data !== null && data !== void 0 ? data : "{}"));
     });
-});
-router.post("/", (req, res) => {
-    res.send(req.body);
 });
 exports.default = router;
 //# sourceMappingURL=posts.js.map

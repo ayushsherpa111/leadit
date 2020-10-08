@@ -9,8 +9,9 @@ RUN ls
 
 RUN npm i
 
-COPY . .
-
-RUN npm run build
+COPY src ./src
+COPY @types ./@types
+COPY ormconfig.json .
+COPY tsconfig.json .
 
 EXPOSE 5000

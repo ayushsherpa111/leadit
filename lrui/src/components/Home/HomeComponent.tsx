@@ -1,6 +1,6 @@
 import React from "react";
-import CreateSubComponent from "../CreateSub/CreateSubComponent";
 import "./Home.css";
+import CreatePostComponent from "src/components/CreatePost/CreatePostComponent";
 /* import AuthContext from "src/hooks/useAuth"; */
 
 const HomeComponent: React.FC<{}> = () => {
@@ -11,7 +11,7 @@ const HomeComponent: React.FC<{}> = () => {
         <h1>TOP POSTS</h1>
       </div>
       <div className="options">
-        <CreateSubComponent />
+        <CreatePostComponent />
       </div>
     </div>
   );

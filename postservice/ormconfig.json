@@ -1,5 +1,6 @@
 {
   "type": "postgres",
+  "name": "default",
   "host": "dblogin",
   "port": 5432,
   "username": "root",

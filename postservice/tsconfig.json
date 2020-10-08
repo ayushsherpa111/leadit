@@ -20,7 +20,8 @@
     "strict": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "typeRoots": ["@types", "./node_modules/@types"]
   },
   "exclude": [
     "node_modules",
@@ -29,6 +30,7 @@
     "acceptance-tests",
     "webpack",
     "jest",
+    "@types",
     "src/setupTests.ts"
   ],
   "include": ["./src/**/*.ts"]

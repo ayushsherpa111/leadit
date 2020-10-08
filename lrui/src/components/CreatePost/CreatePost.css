@@ -1,7 +1,18 @@
 .createBox {
   padding: 10px;
-  border: 1px solid var(--orange);
+  border: 1px solid var(--border);
+  background-color: var(--background);
   border-radius: 8px;
+}
+
+.topBack {
+  width: 105%;
+  background: url(/images/starry.jpg);
+  height: 34px;
+  background-position: center;
+  margin: -9px -9px 5px;
+  background-position-y: 60px;
+  border-radius: 8px 8px 0 0;
 }
 
 .sub {
@@ -20,7 +31,6 @@
   display: flex;
   margin-top: 20px;
   flex-direction: column;
-  background-image: url("/images/add.png");
 }
 
 .detail p {

@@ -1,0 +1,26 @@
+.formGroup .uploadArea {
+  border: 1px solid var(--border);
+  width: 100%;
+  background-color: transparent;
+  padding: 5px;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+}
+
+.formGroup .uploadArea p {
+  font-size: 15px;
+  margin-right: 10px;
+  font-weight: 600;
+}
+
+.formGroup .uploadArea button {
+  width: 15%;
+  font-size: 11px;
+}
+
+.uploadArea input[type="file"] {
+  display: none;
+}

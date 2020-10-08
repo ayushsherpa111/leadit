@@ -1,5 +1,10 @@
 :root {
   --orange: #ff4500;
+  --background: #171718;
+  --border: #474748;
+  --deactivate: #818384;
+  --hov: #242426;
+  --error: #ff5200;
 }
 
 * {
@@ -33,7 +38,7 @@ button {
   cursor: pointer;
   border-radius: 5px;
   font-weight: 600;
-  width: 39%;
+  /* width: 39%; */
   text-transform: uppercase;
   font-size: 13px;
   letter-spacing: 1px;

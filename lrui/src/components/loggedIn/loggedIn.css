@@ -1,0 +1,68 @@
+.accountBox {
+  display: flex;
+  border-radius: 8px;
+  align-items: center;
+  padding: 5.5px 6px;
+  width: 55%;
+  margin: auto;
+  transition: all 500ms ease;
+  cursor: pointer;
+}
+
+.accountPic {
+  margin-right: 10px;
+}
+
+.accountPic img {
+  border-radius: 50%;
+  width: 25px;
+}
+
+.accountBox:hover {
+  border: 1px solid #6a6b6b;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+}
+
+.points {
+  display: flex;
+  align-items: flex-end;
+  margin-top: 2px;
+}
+
+.details .uName {
+  font-size: 12.5px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 86px;
+  white-space: nowrap;
+}
+
+.details .points img {
+  width: 13px;
+  filter: invert(1);
+  margin-right: 4px;
+}
+
+.val {
+  font-size: 11px;
+}
+
+/* .dropDown { */
+/*   margin-left: 18%; */
+/* } */
+
+.dropDown img {
+  width: 20px;
+  filter: invert(1);
+}
+
+@media screen and (max-width: 1400px) {
+  .accountBox {
+    width: 67%;
+  }
+}

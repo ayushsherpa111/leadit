@@ -44,6 +44,8 @@ services:
       - ./postservice/package.json:/usr/share/app/package.json
       - ./postservice/package-lock.json:/usr/share/app/package-lock.json
       - ./postservice/ormconfig.json:/usr/share/app/ormconfig.json
+      - ./postservice/tsconfig.json:/usr/share/app/tsconfig.json
+      - ./postservice/public:/usr/share/app/public
     environment:
       REDIS_PORT: "6379"
       REDIS_HOST: "redis_store"
@@ -55,7 +57,7 @@ services:
     depends_on:
       - dblogin
       - redistore
-    command: npm run start2
+    command: npm run dev2
 
   dblogin:
     container_name: login_db

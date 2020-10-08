@@ -10,4 +10,11 @@
 
 .options {
   padding: 10px 10px 10px 0;
+  width: 25%;
+}
+
+@media screen and (max-width: 1400px) {
+  .options {
+    width: 35%;
+  }
 }

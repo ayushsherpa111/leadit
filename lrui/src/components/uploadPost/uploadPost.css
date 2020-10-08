@@ -1,0 +1,90 @@
+.uploadBack {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  width: 100%;
+  height: calc(100vh - 50px);
+}
+
+.formContent {
+  width: 38%;
+  margin: 5% auto 0;
+}
+
+.formContent .title {
+  margin-bottom: 25px;
+  border-bottom: 1px solid var(--border);
+}
+
+.formContent .title h1 {
+  margin-bottom: 5px;
+}
+
+.postForm {
+  background-color: var(--background);
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-evenly;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 25px;
+}
+
+.tab {
+  display: flex;
+  width: 100%;
+  font-size: 14px;
+  padding: 8px;
+  justify-content: center;
+  padding: 15px;
+  background: none;
+  cursor: pointer;
+  border-top-left-radius: 7px;
+  transition: all ease 250ms;
+}
+
+.tab:hover {
+  background-color: var(--hov);
+}
+
+.tab:not(:last-child) {
+  border-right: 1px solid var(--border);
+}
+
+.tab p {
+  color: var(--deactivate);
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.tab.selected p {
+  color: white;
+}
+
+.tab.selected {
+  border-bottom: 1px solid whitesmoke;
+}
+
+.tab img {
+  width: 26px;
+  margin-right: 7px;
+  filter: invert(1) brightness(0.5);
+}
+
+.bottomBanner {
+  background-image: url("/images/starryNight.jpg");
+  max-height: 286px;
+  flex-grow: 1;
+  background-size: 14% 100%;
+  background-repeat-y: no-repeat;
+}
+
+@media screen and (max-width: 1400px) {
+  .uploadBack {
+    width: 50%;
+  }
+}

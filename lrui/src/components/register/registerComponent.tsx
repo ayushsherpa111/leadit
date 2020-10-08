@@ -1,19 +1,21 @@
 import * as React from "react";
 import "./register.css";
 import { Formik, Form, ErrorMessage, Field } from "formik";
-import User, { AuthStat } from "src/interfaces/user";
+import User, { AuthStat, AuthProp } from "src/interfaces/user";
 import * as Yup from "yup";
 import { RouteComponentProps, Redirect } from "react-router-dom";
 import AuthContext from "src/hooks/useAuth";
-interface Props extends RouteComponentProps {
-  isLoggedIn: (user: AuthStat) => boolean;
-}
+interface Props extends RouteComponentProps, AuthProp {}
 
 interface Register extends User {
   confirm: string;
 }
 
-export const RegisterComponent: React.FC<Props> = ({ isLoggedIn, history }) => {
+const RegisterComponent: React.FC<Props> = ({
+  isLoggedIn,
+  history,
+  setToken,
+}) => {
   const { user, setUser } = React.useContext(AuthContext)!;
   const initalValues: Register = {
     username: "",
@@ -61,7 +63,8 @@ export const RegisterComponent: React.FC<Props> = ({ isLoggedIn, history }) => {
           })}
           onSubmit={async (values: Register, action) => {
             try {
-              setUser(() => ({
+              setUser((v: AuthStat) => ({
+                ...v,
                 isLoggedIn: false,
                 pending: true,
               }));
@@ -74,18 +77,25 @@ export const RegisterComponent: React.FC<Props> = ({ isLoggedIn, history }) => {
                 },
                 body: JSON.stringify(values),
               });
-              const data = await resp.json();
+              const data: AuthStat = await resp.json();
               console.log(data);
               if (resp.status === 200) {
                 console.log("Registered");
                 history.push("/");
+                setToken({
+                  ...data,
+                  isLoggedIn: true,
+                  pending: false,
+                });
                 setUser(() => ({
+                  ...data,
                   isLoggedIn: true,
                   pending: false,
                 }));
                 action.resetForm();
               } else {
-                setUser(() => ({
+                setUser((user: AuthStat) => ({
+                  ...user,
                   isLoggedIn: false,
                   pending: false,
                 }));
@@ -165,3 +175,5 @@ export const RegisterComponent: React.FC<Props> = ({ isLoggedIn, history }) => {
     </div>
   );
 };
+
+export default RegisterComponent;

@@ -1,18 +1,21 @@
-import React from "react";
+import React, { Suspense } from "react";
 import AuthContext, { defaultLoginState } from "./hooks/useAuth";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import NavBarComponent from "./components/navBar/navBarComponent";
-import { RegisterComponent } from "./components/register/registerComponent";
 import { AccountSettingComp } from "./components/accountSettings/accountSettingComp";
 import HomeComponent from "./components/Home/HomeComponent";
 import ProtectedRoute from "./ProtectedRoute";
 import LoginComponent from "./components/loginPage/loginComponent";
 import authService from "./utils/authHandler";
-import SubFormComponent from "./components/SubForm/SubFormComponent";
+import UploadPostComponent from "./components/uploadPost/uploadPostComponent";
 
 interface Props {
   children?: JSX.Element[];
 }
+
+const RegisterLazy = React.lazy(
+  () => import("./components/register/registerComponent")
+);
 
 const AuthProvider: React.FC<Props> = () => {
   const [user, setUser] = React.useState(defaultLoginState);
@@ -20,18 +23,22 @@ const AuthProvider: React.FC<Props> = () => {
   return (
     <AuthContext.Provider value={{ user, setUser }}>
       <Router>
-        <NavBarComponent />
+        <NavBarComponent isLoggedIn={isLoggedIn} />
         <Switch>
           <Route path="/" exact component={HomeComponent} />
-          <ProtectedRoute
-            path="/account"
-            Component={AccountSettingComp}
-            auth={user}
-          />
+          <ProtectedRoute path="/account" auth={user}>
+            <AccountSettingComp />
+          </ProtectedRoute>
           <Route
             path="/register"
             render={(props) => (
-              <RegisterComponent isLoggedIn={isLoggedIn} {...props} />
+              <Suspense fallback={<div>Loading...</div>}>
+                <RegisterLazy
+                  setToken={setToken}
+                  isLoggedIn={isLoggedIn}
+                  {...props}
+                />
+              </Suspense>
             )}
           />
           <Route
@@ -45,11 +52,9 @@ const AuthProvider: React.FC<Props> = () => {
               />
             )}
           />
-          <ProtectedRoute
-            path="/sub/create"
-            auth={user}
-            Component={SubFormComponent}
-          />
+          <ProtectedRoute path="/u/post" auth={user}>
+            <UploadPostComponent />
+          </ProtectedRoute>
           <Route path="/" render={() => <h1>404 not found</h1>} />
         </Switch>
       </Router>
